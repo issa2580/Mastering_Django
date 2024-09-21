@@ -3,3 +3,17 @@
 {% else %}
 <h1>Hello World</h1>
 {% endif %}
+<table>
+  <tr>
+    <th>FirstName</th>
+    <th>LastName</th>
+    <th>Membership</th>
+  </tr>
+  {% for customer in customers %}
+  <tr>
+    <td>{{ customer.first_name }}</td>
+    <td>{{ customer.last_name }}</td>
+    <td>{{ customer.membership }}</td>
+  </tr>
+  {% endfor %}
+</table>
