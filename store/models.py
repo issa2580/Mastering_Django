@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class Promotion(models.Model):
     description = models.CharField(max_length=255)
     discount = models.FloatField()
@@ -7,6 +8,12 @@ class Promotion(models.Model):
 class Collection(models.Model):
     title = models.CharField(max_length=255)
     featured_product = models.ForeignKey('Product', on_delete=models.SET_NULL, null=True, related_name='+')
+    
+    def __str__(self) -> str:
+        return self.title
+    
+    class Meta:
+        ordering = ['title']
 
 class Product (models.Model):
     title = models.CharField(max_length=255)
@@ -35,7 +42,7 @@ class Customer(models.Model):
     membership = models.CharField(max_length=10, choices=MEMBERSHIP_CHOICES, default=MEMBERSHIP_BRONZE)
     
     def __str__ (self):
-        return f'{self.first_name} {self.last_name} {self.email} {self.membership}'
+        return f'{self.first_name} {self.last_name}'
     
     class Meta:
         ordering = ['first_name', 'last_name']
@@ -55,7 +62,7 @@ class Order(models.Model):
     
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.PROTECT)
-    product = models.ForeignKey(Product, on_delete=models.PROTECT)
+    product = models.ForeignKey(Product, on_delete=models.PROTECT, related_name='orderitems')
     quantity = models.PositiveSmallIntegerField()
     unit_price = models.DecimalField(max_digits=6, decimal_places=2)
     
