@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'django_filters',
     'playground',
     'store',
     'tags',
@@ -130,5 +131,5 @@ STATIC_URL = '/static/'
 
 # Converts a string value to a decimal number
 REST_FRAMEWORK = {
-    'COERCE_DECIMAL_TO_STRING': False
+    'COERCE_DECIMAL_TO_STRING': False,
 }
