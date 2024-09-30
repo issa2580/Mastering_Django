@@ -10,12 +10,13 @@ from rest_framework.mixins import CreateModelMixin, ListModelMixin
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
 from .filters import ProductFilter
-from .models import Collection, Product
+from .models import Cart, Collection, Product
 from .pagination import DefaultPagination
-from .serializers import CollectionSerializer, ProductSerializer
+from .serializers import (CartSerializer, CollectionSerializer,
+                          ProductSerializer)
 
 
 # Creating ViewSets
@@ -51,6 +52,10 @@ class CollectionViewSet(ModelViewSet):
             return Response({'error': 'Collection cannot be deleted because it contains products'}, status=405)
         collection.delete()
         return Response(status=204)
+    
+class CartViewSet(CreateModelMixin, GenericViewSet):
+    queryset = Cart.objects.all()
+    serializer_class = CartSerializer
 
 
 # Create Generic API View

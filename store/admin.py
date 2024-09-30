@@ -48,3 +48,14 @@ class ProductAdmin(admin.ModelAdmin):
 @admin.register(models.Order)
 class OrderAdmin(admin.ModelAdmin):
     list_display = ['id', 'placed_at', 'payment_status', 'customer']
+    
+# @admin.register(models.Cart)
+# class CartAdmin(admin.ModelAdmin):
+#     list_display = ['id', 'created_at']
+    
+# @admin.register(models.CartItem)
+# class CartItemAdmin(admin.ModelAdmin):
+#     list_display = ['product', 'quantity']
+    
+#     def get_queryset(self, request:HttpRequest) -> QuerySet:
+#         return super().get_queryset(request).select_related('product')
