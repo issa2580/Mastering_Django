@@ -11,19 +11,28 @@ from . import models
 
 @admin.register(models.Customer)
 class CustomerAdmin(admin.ModelAdmin):
-    list_display = ['first_name', 'last_name', 'email', 'phone', 'birth_date', 'membership',]
+    list_display = ['first_name', 'last_name', 'phone', 'membership']
     list_editable = ['membership']
-    ordering = ['first_name', 'last_name']
-    search_fields = ['first_name__istartswith', 'last_name__istartswith']
     list_per_page = 10
+    list_select_related = ['user']
+    ordering = ['user__first_name', 'user__last_name']
+    list_select_related = ['user']
+    search_fields = ['first_name__istartswith', 'last_name__istartswith']
+    
+    @admin.display(ordering='order_count')
+    def orders(self, customer):
+        url = (
+            reverse('admin:store_order_changelist')
+            + '?'
+            + urlencode({'customer__id': str(customer.id)})
+        )
+        return format_html('<a href="{}">{}</a>', url, customer.order_count)
     
 @admin.register(models.Collection)
 class CollectionAdmin(admin.ModelAdmin):
-    # autocomplete_fields = ['featured_product']
     list_display = ['title', 'products_count']
     ordering = ['title']
     
-    # @admin.display(ordering='products_count')
     def products_count(self, collection):
         url = (
             reverse('admin:store_product_changelist')
@@ -48,14 +57,4 @@ class ProductAdmin(admin.ModelAdmin):
 @admin.register(models.Order)
 class OrderAdmin(admin.ModelAdmin):
     list_display = ['id', 'placed_at', 'payment_status', 'customer']
-    
-# @admin.register(models.Cart)
-# class CartAdmin(admin.ModelAdmin):
-#     list_display = ['id', 'created_at']
-    
-# @admin.register(models.CartItem)
-# class CartItemAdmin(admin.ModelAdmin):
-#     list_display = ['product', 'quantity']
-    
-#     def get_queryset(self, request:HttpRequest) -> QuerySet:
-#         return super().get_queryset(request).select_related('product')
+
