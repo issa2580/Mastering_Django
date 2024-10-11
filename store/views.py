@@ -10,20 +10,21 @@ from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
 from .filters import ProductFilter
 from .models import (Cart, CartItem, Collection, Customer, Order, OrderItem,
-                     Product, Review)
+                     Product, ProductImage, Review)
 from .pagination import DefaultPagination
 from .permissions import IsAdminOrReadOnly, ViewCustomerHistoryPermission
 from .serializers import (AddCartItemSerializer, CartItemSerializer,
                           CartSerializer, CollectionSerializer,
                           CreateOrderSerializer, CustomerSerializer,
                           OrderItemSerializer, OrderSerializer,
-                          ProductSerializer, ReviewSerializer,
-                          UpdateCartItemSerializer, UpdateOrderSerializer)
+                          ProductImageSerializer, ProductSerializer,
+                          ReviewSerializer, UpdateCartItemSerializer,
+                          UpdateOrderSerializer)
 
 
 # Creating ViewSets
 class ProductViewSet(ModelViewSet):
-    queryset = Product.objects.all()
+    queryset = Product.objects.prefetch_related('images').all()
     serializer_class = ProductSerializer
     pagination_class = DefaultPagination
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
@@ -41,6 +42,15 @@ class ProductViewSet(ModelViewSet):
             return Response({'error': 'Product cannot be deleted because it is associated with an order item'}, status=405)
         product.delete()
         return Response(status=204)
+    
+class ProductImageViewSet(ModelViewSet):
+    serializer_class = ProductImageSerializer
+    
+    def get_serializer_context(self):
+        return {'product_id': self.kwargs['product_pk']}
+    
+    def get_queryset(self):
+        return ProductImage.objects.filter(product_id=self.kwargs['product_pk'])
     
 class CollectionViewSet(ModelViewSet):
     queryset = Collection.objects.annotate(products_count=Count('product')).all()
