@@ -13,7 +13,7 @@ class Promotion(models.Model):
 
 class Collection(models.Model):
     title = models.CharField(max_length=255)
-    featured_product = models.ForeignKey('Product', on_delete=models.SET_NULL, null=True, related_name='+')
+    featured_product = models.ForeignKey('Product', on_delete=models.SET_NULL, null=True, related_name='+', blank=True)
     
     def __str__(self) -> str:
         return self.title
@@ -28,12 +28,18 @@ class Product (models.Model):
     unit_price = models.DecimalField(max_digits=6, decimal_places=2)
     inventory = models.IntegerField()
     last_update = models.DateTimeField(auto_now=True)
-    collection = models.ForeignKey(Collection, on_delete=models.PROTECT)
-    promotions = models.ManyToManyField(Promotion)
+    collection = models.ForeignKey(Collection, on_delete=models.PROTECT, related_name='product')
+    promotions = models.ManyToManyField(Promotion, blank=True)
+    
+    def __str__(self) -> str:
+        return self.title
+    
+    class Meta:
+        ordering = ['title']
     
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images')
-    image = models.ImageField(upload_to='products', validators=[validate_file_size])
+    image = models.ImageField(upload_to='store/images', validators=[validate_file_size])
     
 class Customer(models.Model):
     MEMBERSHIP_BRONZE = 'B'
