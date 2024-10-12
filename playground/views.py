@@ -1,10 +1,19 @@
+from django.core.mail import BadHeaderError, mail_admins, send_mail
 from django.shortcuts import render
-from django.http import HttpResponse
-from store.models import Customer
+from templated_mail.mail import BaseEmailMessage
+
 
 def say_hello(request):
-    # customer = Customer.objects.filter(membership=Customer.MEMBERSHIP_BRONZE).order_by('first_name')[5:15]
-    customer = Customer.objects.values('first_name', 'last_name', 'membership').order_by('first_name')[5:15]
+    try:
+        message = BaseEmailMessage(
+            template_name='emails/email.html',
+            context={
+                'name': 'Issa'
+            },
+        )
+        message.send(['issa@gmail.com'])
+        mail_admins('subject', 'message', html_message='message')
+    except BadHeaderError:
+        pass
     
-    
-    return render(request, 'hello.html', {'name': 'Mosh', 'customers': customer})
+    return render(request, 'hello.html', {'name': 'Issa'})
